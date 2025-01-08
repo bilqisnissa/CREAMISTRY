@@ -1,0 +1,249 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MenuGUI {
+    private static Pelanggan pelanggan = null;
+
+    public static void main(String[] args) {
+        Produk produk = new Produk();
+        Transaksi transaksi = new Transaksi();
+        Login login = new Login();
+
+        JFrame frame = new JFrame("CREAMISTRY");
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new CardLayout());
+
+        // Panel untuk memilih peran
+        JPanel panelPilihan = new JPanel(new GridLayout(3, 1, 10, 10));
+        JButton buttonLoginAdmin = new JButton("Admin");
+        JButton buttonLoginPembeli = new JButton("Pembeli");
+        panelPilihan.add(new JLabel("Pilih Peran:", JLabel.CENTER));
+        panelPilihan.add(buttonLoginAdmin);
+        panelPilihan.add(buttonLoginPembeli);
+
+        // Panel untuk login admin
+        JPanel panelLoginAdmin = new JPanel(new GridLayout(4, 1, 5, 5));
+        JTextField fieldUsername = new JTextField();
+        JPasswordField fieldPassword = new JPasswordField();
+        JButton buttonMasukAdmin = new JButton("Masuk");
+
+        panelLoginAdmin.add(new JLabel("Username:"));
+        panelLoginAdmin.add(fieldUsername);
+        panelLoginAdmin.add(new JLabel("Password:"));
+        panelLoginAdmin.add(fieldPassword);
+        panelLoginAdmin.add(buttonMasukAdmin);
+
+        // Panel untuk login pembeli
+        JPanel panelLoginPembeli = new JPanel(new GridLayout(3, 1, 5, 5));
+        JTextField fieldNamaPembeli = new JTextField();
+        JButton buttonMasukPembeli = new JButton("Masuk");
+        panelLoginPembeli.add(new JLabel("Masukkan Nama Anda:"));
+        panelLoginPembeli.add(fieldNamaPembeli);
+        panelLoginPembeli.add(buttonMasukPembeli);
+
+        // Panel untuk pembeli
+        JPanel panelPembeli = new JPanel(new BorderLayout());
+        JPanel panelMenuPembeli = new JPanel();
+        produk.tampilkanMenuToPanel(panelMenuPembeli);
+        JScrollPane scrollMenuPembeli = new JScrollPane(panelMenuPembeli);
+
+        JTextArea textTransaksiPembeli = new JTextArea();
+        textTransaksiPembeli.setEditable(false);
+        JScrollPane scrollTransaksiPembeli = new JScrollPane(textTransaksiPembeli);
+
+        JPanel panelInputPembeli = new JPanel(new GridLayout(3, 2, 5, 5));
+        JTextField fieldNamaProduk = new JTextField();
+        JTextField fieldJumlahProduk = new JTextField();
+        JButton buttonTambahProduk = new JButton("Tambah");
+
+        panelInputPembeli.add(new JLabel("Nama Produk:"));
+        panelInputPembeli.add(fieldNamaProduk);
+        panelInputPembeli.add(new JLabel("Jumlah:"));
+        panelInputPembeli.add(fieldJumlahProduk);
+        panelInputPembeli.add(new JLabel(""));
+        panelInputPembeli.add(buttonTambahProduk);
+
+        JPanel panelBayar = new JPanel(new GridLayout(3, 1, 5, 5));
+        JLabel labelTotalBayar = new JLabel("Total: Rp0");
+        JTextField fieldUangBayar = new JTextField();
+        JButton buttonBayar = new JButton("Bayar");
+        JButton buttonKembaliKeMenuAwalPembeli = new JButton("Kembali ke Menu Awal");
+
+        panelBayar.add(buttonKembaliKeMenuAwalPembeli);
+        panelBayar.add(labelTotalBayar);
+        panelBayar.add(new JLabel("Jumlah Uang Yang Dibayar:"));
+        panelBayar.add(fieldUangBayar);
+        panelBayar.add(buttonBayar);
+
+        panelPembeli.add(scrollMenuPembeli, BorderLayout.NORTH);
+        panelPembeli.add(panelInputPembeli, BorderLayout.CENTER);
+        panelPembeli.add(scrollTransaksiPembeli, BorderLayout.SOUTH);
+        panelPembeli.add(panelBayar, BorderLayout.PAGE_END);
+
+        // Panel untuk admin
+        JPanel panelAdmin = new JPanel(new BorderLayout());
+        JPanel panelMenuAdmin = new JPanel();
+        produk.tampilkanMenuToPanel(panelMenuAdmin);
+        JScrollPane scrollMenuAdmin = new JScrollPane(panelMenuAdmin);
+
+        JPanel panelKelolaStok = new JPanel(new GridLayout(4, 2, 5, 5));
+        JTextField fieldNamaStok = new JTextField();
+        JTextField fieldJumlahStok = new JTextField();
+        JButton buttonTambahStok = new JButton("Tambah Stok");
+
+        panelKelolaStok.add(new JLabel("Nama Produk:"));
+        panelKelolaStok.add(fieldNamaStok);
+        panelKelolaStok.add(new JLabel("Jumlah:"));
+        panelKelolaStok.add(fieldJumlahStok);
+        panelKelolaStok.add(new JLabel(""));
+        panelKelolaStok.add(buttonTambahStok);
+
+        JButton buttonKembaliKeMenuAwalAdmin = new JButton("Kembali ke Menu Awal");
+        panelAdmin.add(buttonKembaliKeMenuAwalAdmin, BorderLayout.NORTH);
+        panelAdmin.add(scrollMenuAdmin, BorderLayout.CENTER);
+        panelAdmin.add(panelKelolaStok, BorderLayout.SOUTH);
+
+        frame.add(panelPilihan, "pilihan");
+        frame.add(panelLoginAdmin, "loginAdmin");
+        frame.add(panelLoginPembeli, "loginPembeli");
+        frame.add(panelPembeli, "pembeli");
+        frame.add(panelAdmin, "admin");
+
+        CardLayout cardLayout = (CardLayout) frame.getContentPane().getLayout();
+
+        // Event handling
+        buttonLoginAdmin.addActionListener(e -> cardLayout.show(frame.getContentPane(), "loginAdmin"));
+
+        buttonLoginPembeli.addActionListener(e -> cardLayout.show(frame.getContentPane(), "loginPembeli"));
+
+        buttonMasukAdmin.addActionListener(e -> {
+            String username = fieldUsername.getText();
+            String password = new String(fieldPassword.getPassword());
+            if (login.validasiAdmin(username, password)) {
+                JOptionPane.showMessageDialog(frame, "Login berhasil sebagai Admin!");
+                cardLayout.show(frame.getContentPane(), "admin");
+            } else {
+                JOptionPane.showMessageDialog(frame, "Username atau password salah!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        buttonMasukPembeli.addActionListener(e -> {
+            String nama = fieldNamaPembeli.getText().trim();
+            if (nama.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Nama tidak boleh kosong!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                pelanggan = new Pelanggan(nama);
+                JOptionPane.showMessageDialog(frame, "Selamat datang, " + pelanggan.getNama());
+                cardLayout.show(frame.getContentPane(), "pembeli");
+            }
+        });
+
+        buttonTambahProduk.addActionListener(e -> {
+            try {
+                String namaProduk = fieldNamaProduk.getText();
+                int jumlah = Integer.parseInt(fieldJumlahProduk.getText());
+                int harga = produk.getHarga(namaProduk);
+                if (harga > 0 && produk.beliMenu(namaProduk, jumlah)) {
+                    int totalHarga = harga * jumlah;
+                    transaksi.tambahKeTotal(totalHarga);
+                    labelTotalBayar.setText("Total: Rp" + transaksi.getTotal());
+                    textTransaksiPembeli.append(String.format("%d x %s (Rp%d)\n", jumlah, namaProduk, totalHarga));
+                    produk.tampilkanMenuToPanel(panelMenuPembeli);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Produk tidak ditemukan atau stok tidak mencukupi!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Jumlah harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        buttonTambahStok.addActionListener(e -> {
+            try {
+                String namaProduk = fieldNamaStok.getText();
+                int jumlah = Integer.parseInt(fieldJumlahStok.getText());
+                if (produk.tambahStok(namaProduk, jumlah)) {
+                    JOptionPane.showMessageDialog(frame, "Stok berhasil ditambah!");
+                    produk.tampilkanMenuToPanel(panelMenuAdmin);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Produk tidak ditemukan!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(frame, "Jumlah harus berupa angka!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        //Button Bayar
+        buttonBayar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    int uangDibayar = Integer.parseInt(fieldUangBayar.getText());
+                    if (uangDibayar < transaksi.getTotal()) {
+                        JOptionPane.showMessageDialog(frame, "Uang tidak cukup!", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        int kembalian = uangDibayar - transaksi.getTotal();
+                        String namaPelanggan = pelanggan.getNama();
+                        String detailTransaksi = textTransaksiPembeli.getText();
+                        int total = transaksi.getTotal();
+
+                        // Format rincian bill
+                        StringBuilder bill = new StringBuilder();
+                        bill.append("============= CREAMISTRY =============\n");
+                        bill.append("Pelanggan: ").append(namaPelanggan).append("\n");
+                        bill.append("========================================\n");
+                        bill.append(detailTransaksi);
+                        bill.append("========================================\n");
+                        bill.append("Total: Rp").append(total).append("\n");
+                        bill.append("Jumlah Uang Yang Dibayar: Rp").append(uangDibayar).append("\n");
+                        bill.append("Kembalian: Rp").append(kembalian).append("\n");
+                        bill.append("========================================\n");
+                        bill.append("Terima kasih telah berbelanja di CREAMISTRY!");
+
+                        // Tampilkan dialog dengan rincian bill
+                        JOptionPane.showMessageDialog(frame, bill.toString(), "Bill Pembayaran", JOptionPane.INFORMATION_MESSAGE);
+
+                        // Reset transaksi
+                        transaksi.resetTotal(); // Reset total transaksi
+                        labelTotalBayar.setText("Total: Rp0");
+                        textTransaksiPembeli.setText("");
+                        fieldUangBayar.setText("");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Masukkan jumlah uang yang valid!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        buttonKembaliKeMenuAwalPembeli.addActionListener(e -> cardLayout.show(frame.getContentPane(), "pilihan"));
+
+        buttonKembaliKeMenuAwalAdmin.addActionListener(e -> cardLayout.show(frame.getContentPane(), "pilihan"));
+
+        frame.setVisible(true);
+    }
+}
+
+class Login {
+    private static final String USERNAME_ADMIN = "admin";
+    private static final String PASSWORD_ADMIN = "admin123";
+
+    public boolean validasiAdmin(String username, String password) {
+        return username.equals(USERNAME_ADMIN) && password.equals(PASSWORD_ADMIN);
+    }
+}
+
+class Pelanggan {
+    private String nama;
+
+    public Pelanggan(String nama) {
+        this.nama = nama;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+}
+
+// Kelas Produk dan Transaksi mengikuti seperti pada kode yang Anda kirimkan sebelumnya.
