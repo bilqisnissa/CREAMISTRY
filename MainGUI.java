@@ -11,7 +11,7 @@ public class MainGUI {
         Transaksi transaksi = new Transaksi();
         Login login = new Login();
 
-        JFrame frame = new JFrame("CREAMISTRY");
+        JFrame frame = new JFrame("CREAMISTRY CAFE");
         frame.setSize(800, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new CardLayout());
